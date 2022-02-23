@@ -1,0 +1,4595 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn import linear_model\n",
+    "from sklearn import metrics\n",
+    "import seaborn as sns\n",
+    "from sklearn.preprocessing import MinMaxScaler\n",
+    "from sklearn import preprocessing\n",
+    "from sklearn.cluster import KMeans\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# QUESTION 1: "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In this task, you have to work with a dataset in the file students.csv. The data provides\n",
+    "some information about students, including: (i) gender, (ii) the educational background of the student’s\n",
+    "parents, (iii) whether the student has participated in test preparation courses, and (iv) the test scores\n",
+    "in math, reading and writing. By making use of the basic data analysis tools introduced in the course,\n",
+    "answer the following questions:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>gender</th>\n",
+       "      <th>parental_education</th>\n",
+       "      <th>test_prep_course</th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>female</td>\n",
+       "      <td>bachelor's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>72</td>\n",
+       "      <td>72</td>\n",
+       "      <td>74</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>female</td>\n",
+       "      <td>some college</td>\n",
+       "      <td>completed</td>\n",
+       "      <td>69</td>\n",
+       "      <td>90</td>\n",
+       "      <td>88</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>female</td>\n",
+       "      <td>master's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>90</td>\n",
+       "      <td>95</td>\n",
+       "      <td>93</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>male</td>\n",
+       "      <td>associate's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>47</td>\n",
+       "      <td>57</td>\n",
+       "      <td>44</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>male</td>\n",
+       "      <td>some college</td>\n",
+       "      <td>none</td>\n",
+       "      <td>76</td>\n",
+       "      <td>78</td>\n",
+       "      <td>75</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>995</th>\n",
+       "      <td>female</td>\n",
+       "      <td>master's degree</td>\n",
+       "      <td>completed</td>\n",
+       "      <td>88</td>\n",
+       "      <td>99</td>\n",
+       "      <td>95</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>996</th>\n",
+       "      <td>male</td>\n",
+       "      <td>high school</td>\n",
+       "      <td>none</td>\n",
+       "      <td>62</td>\n",
+       "      <td>55</td>\n",
+       "      <td>55</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>997</th>\n",
+       "      <td>female</td>\n",
+       "      <td>high school</td>\n",
+       "      <td>completed</td>\n",
+       "      <td>59</td>\n",
+       "      <td>71</td>\n",
+       "      <td>65</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>998</th>\n",
+       "      <td>female</td>\n",
+       "      <td>some college</td>\n",
+       "      <td>completed</td>\n",
+       "      <td>68</td>\n",
+       "      <td>78</td>\n",
+       "      <td>77</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>999</th>\n",
+       "      <td>female</td>\n",
+       "      <td>some college</td>\n",
+       "      <td>none</td>\n",
+       "      <td>77</td>\n",
+       "      <td>86</td>\n",
+       "      <td>86</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>1000 rows × 6 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     gender  parental_education test_prep_course  math_score  reading_score  \\\n",
+       "0    female   bachelor's degree             none          72             72   \n",
+       "1    female        some college        completed          69             90   \n",
+       "2    female     master's degree             none          90             95   \n",
+       "3      male  associate's degree             none          47             57   \n",
+       "4      male        some college             none          76             78   \n",
+       "..      ...                 ...              ...         ...            ...   \n",
+       "995  female     master's degree        completed          88             99   \n",
+       "996    male         high school             none          62             55   \n",
+       "997  female         high school        completed          59             71   \n",
+       "998  female        some college        completed          68             78   \n",
+       "999  female        some college             none          77             86   \n",
+       "\n",
+       "     writing_score  \n",
+       "0               74  \n",
+       "1               88  \n",
+       "2               93  \n",
+       "3               44  \n",
+       "4               75  \n",
+       "..             ...  \n",
+       "995             95  \n",
+       "996             55  \n",
+       "997             65  \n",
+       "998             77  \n",
+       "999             86  \n",
+       "\n",
+       "[1000 rows x 6 columns]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Import the dataset\n",
+    "student = pd.read_csv('students.csv')\n",
+    "student"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 1000 entries, 0 to 999\n",
+      "Data columns (total 6 columns):\n",
+      " #   Column              Non-Null Count  Dtype \n",
+      "---  ------              --------------  ----- \n",
+      " 0   gender              1000 non-null   object\n",
+      " 1   parental_education  1000 non-null   object\n",
+      " 2   test_prep_course    1000 non-null   object\n",
+      " 3   math_score          1000 non-null   int64 \n",
+      " 4   reading_score       1000 non-null   int64 \n",
+      " 5   writing_score       1000 non-null   int64 \n",
+      "dtypes: int64(3), object(3)\n",
+      "memory usage: 47.0+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Check the types of variables in the dataset\n",
+    "student.info()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "From the info of the data, we can see that there is no missing values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>gender</th>\n",
+       "      <th>parental_education</th>\n",
+       "      <th>test_prep_course</th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>995</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>996</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>997</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>998</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>999</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>1000 rows × 6 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     gender  parental_education  test_prep_course  math_score  reading_score  \\\n",
+       "0     False               False             False       False          False   \n",
+       "1     False               False             False       False          False   \n",
+       "2     False               False             False       False          False   \n",
+       "3     False               False             False       False          False   \n",
+       "4     False               False             False       False          False   \n",
+       "..      ...                 ...               ...         ...            ...   \n",
+       "995   False               False             False       False          False   \n",
+       "996   False               False             False       False          False   \n",
+       "997   False               False             False       False          False   \n",
+       "998   False               False             False       False          False   \n",
+       "999   False               False             False       False          False   \n",
+       "\n",
+       "     writing_score  \n",
+       "0            False  \n",
+       "1            False  \n",
+       "2            False  \n",
+       "3            False  \n",
+       "4            False  \n",
+       "..             ...  \n",
+       "995          False  \n",
+       "996          False  \n",
+       "997          False  \n",
+       "998          False  \n",
+       "999          False  \n",
+       "\n",
+       "[1000 rows x 6 columns]"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student.isnull()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Again, from the info of the data, we can see that NO missing values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "gender                0\n",
+       "parental_education    0\n",
+       "test_prep_course      0\n",
+       "math_score            0\n",
+       "reading_score         0\n",
+       "writing_score         0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>gender</th>\n",
+       "      <th>parental_education</th>\n",
+       "      <th>test_prep_course</th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>female</td>\n",
+       "      <td>bachelor's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>72</td>\n",
+       "      <td>72</td>\n",
+       "      <td>74</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>female</td>\n",
+       "      <td>some college</td>\n",
+       "      <td>completed</td>\n",
+       "      <td>69</td>\n",
+       "      <td>90</td>\n",
+       "      <td>88</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>female</td>\n",
+       "      <td>master's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>90</td>\n",
+       "      <td>95</td>\n",
+       "      <td>93</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>male</td>\n",
+       "      <td>associate's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>47</td>\n",
+       "      <td>57</td>\n",
+       "      <td>44</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>male</td>\n",
+       "      <td>some college</td>\n",
+       "      <td>none</td>\n",
+       "      <td>76</td>\n",
+       "      <td>78</td>\n",
+       "      <td>75</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   gender  parental_education test_prep_course  math_score  reading_score  \\\n",
+       "0  female   bachelor's degree             none          72             72   \n",
+       "1  female        some college        completed          69             90   \n",
+       "2  female     master's degree             none          90             95   \n",
+       "3    male  associate's degree             none          47             57   \n",
+       "4    male        some college             none          76             78   \n",
+       "\n",
+       "   writing_score  \n",
+       "0             74  \n",
+       "1             88  \n",
+       "2             93  \n",
+       "3             44  \n",
+       "4             75  "
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>1000.00000</td>\n",
+       "      <td>1000.000000</td>\n",
+       "      <td>1000.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>66.08900</td>\n",
+       "      <td>69.169000</td>\n",
+       "      <td>68.054000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>15.16308</td>\n",
+       "      <td>14.600192</td>\n",
+       "      <td>15.195657</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.00000</td>\n",
+       "      <td>17.000000</td>\n",
+       "      <td>10.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>57.00000</td>\n",
+       "      <td>59.000000</td>\n",
+       "      <td>57.750000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>66.00000</td>\n",
+       "      <td>70.000000</td>\n",
+       "      <td>69.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>77.00000</td>\n",
+       "      <td>79.000000</td>\n",
+       "      <td>79.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>100.00000</td>\n",
+       "      <td>100.000000</td>\n",
+       "      <td>100.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       math_score  reading_score  writing_score\n",
+       "count  1000.00000    1000.000000    1000.000000\n",
+       "mean     66.08900      69.169000      68.054000\n",
+       "std      15.16308      14.600192      15.195657\n",
+       "min       0.00000      17.000000      10.000000\n",
+       "25%      57.00000      59.000000      57.750000\n",
+       "50%      66.00000      70.000000      69.000000\n",
+       "75%      77.00000      79.000000      79.000000\n",
+       "max     100.00000     100.000000     100.000000"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student.describe()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "• Are there more male or female students included in the dataset?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>math_score</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.817580</td>\n",
+       "      <td>0.802642</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>reading_score</th>\n",
+       "      <td>0.817580</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.954598</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>writing_score</th>\n",
+       "      <td>0.802642</td>\n",
+       "      <td>0.954598</td>\n",
+       "      <td>1.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "               math_score  reading_score  writing_score\n",
+       "math_score       1.000000       0.817580       0.802642\n",
+       "reading_score    0.817580       1.000000       0.954598\n",
+       "writing_score    0.802642       0.954598       1.000000"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# From the info of the data, we can see that there is no missing values\n",
+    "student.corr()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "female students included in the dataset 518\n",
+      "male students included in the dataset 482\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('female students included in the dataset',student['gender'].tolist().count('female'))\n",
+    "print('male students included in the dataset',student['gender'].tolist().count('male'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "• In which subject did the students perform best overall (i.e. what is the subject with the highest\n",
+    "average score)?\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "<ipython-input-49-ce6fd10efc1d>:1: FutureWarning: Indexing with multiple keys (implicitly converted to a tuple of keys) will be deprecated, use a list instead.\n",
+      "  student.groupby(['gender'])['math_score', 'reading_score', 'writing_score'].agg([np.max, np.min])\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead tr th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead tr:last-of-type th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr>\n",
+       "      <th></th>\n",
+       "      <th colspan=\"2\" halign=\"left\">math_score</th>\n",
+       "      <th colspan=\"2\" halign=\"left\">reading_score</th>\n",
+       "      <th colspan=\"2\" halign=\"left\">writing_score</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th></th>\n",
+       "      <th>amax</th>\n",
+       "      <th>amin</th>\n",
+       "      <th>amax</th>\n",
+       "      <th>amin</th>\n",
+       "      <th>amax</th>\n",
+       "      <th>amin</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>gender</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>female</th>\n",
+       "      <td>100</td>\n",
+       "      <td>0</td>\n",
+       "      <td>100</td>\n",
+       "      <td>17</td>\n",
+       "      <td>100</td>\n",
+       "      <td>10</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>male</th>\n",
+       "      <td>100</td>\n",
+       "      <td>27</td>\n",
+       "      <td>100</td>\n",
+       "      <td>23</td>\n",
+       "      <td>100</td>\n",
+       "      <td>15</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       math_score      reading_score      writing_score     \n",
+       "             amax amin          amax amin          amax amin\n",
+       "gender                                                      \n",
+       "female        100    0           100   17           100   10\n",
+       "male          100   27           100   23           100   15"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student.groupby(['gender'])['math_score', 'reading_score', 'writing_score'].agg([np.max, np.min])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "• How many students can you find with perfect results (100 score in all three subjects)?\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>gender</th>\n",
+       "      <th>parental_education</th>\n",
+       "      <th>test_prep_course</th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>458</th>\n",
+       "      <td>female</td>\n",
+       "      <td>bachelor's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>100</td>\n",
+       "      <td>100</td>\n",
+       "      <td>100</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>916</th>\n",
+       "      <td>male</td>\n",
+       "      <td>bachelor's degree</td>\n",
+       "      <td>completed</td>\n",
+       "      <td>100</td>\n",
+       "      <td>100</td>\n",
+       "      <td>100</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>962</th>\n",
+       "      <td>female</td>\n",
+       "      <td>associate's degree</td>\n",
+       "      <td>none</td>\n",
+       "      <td>100</td>\n",
+       "      <td>100</td>\n",
+       "      <td>100</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     gender  parental_education test_prep_course  math_score  reading_score  \\\n",
+       "458  female   bachelor's degree             none         100            100   \n",
+       "916    male   bachelor's degree        completed         100            100   \n",
+       "962  female  associate's degree             none         100            100   \n",
+       "\n",
+       "     writing_score  \n",
+       "458            100  \n",
+       "916            100  \n",
+       "962            100  "
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student[(student['math_score'] > 99) & \n",
+    "        (student['writing_score'] > 99) &\n",
+    "        (student['reading_score'] > 99)]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "• Can we say that participating in the test preparation course improves the results in math (i.e. is the\n",
+    "average math score higher for those who completed the test preparation course)?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th>math_score</th>\n",
+       "      <th>writing_score</th>\n",
+       "      <th>reading_score</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>test_prep_course</th>\n",
+       "      <th>gender</th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th rowspan=\"2\" valign=\"top\">completed</th>\n",
+       "      <th>female</th>\n",
+       "      <td>67</td>\n",
+       "      <td>79</td>\n",
+       "      <td>78</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>male</th>\n",
+       "      <td>73</td>\n",
+       "      <td>70</td>\n",
+       "      <td>71</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th rowspan=\"2\" valign=\"top\">none</th>\n",
+       "      <th>female</th>\n",
+       "      <td>62</td>\n",
+       "      <td>70</td>\n",
+       "      <td>71</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>male</th>\n",
+       "      <td>67</td>\n",
+       "      <td>60</td>\n",
+       "      <td>63</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                         math_score  writing_score  reading_score\n",
+       "test_prep_course gender                                          \n",
+       "completed        female          67             79             78\n",
+       "                 male            73             70             71\n",
+       "none             female          62             70             71\n",
+       "                 male            67             60             63"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "student[['test_prep_course',\n",
+    "         'gender',\n",
+    "         'math_score',\n",
+    "         'writing_score',\n",
+    "         'reading_score']].groupby(['test_prep_course','gender']).agg('median')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# QUESTION 2:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In this exercise, you will have to analyze a dataset about some employees of a company\n",
+    "(salary.csv). The data includes information about (i) years of experience of the employee, (ii) the age of\n",
+    "the employee, and (iii) the salary of the employee. You need to write the code to answer the following\n",
+    "questions to transform and understand the data further."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "a) There are some missing values in the data. In the experience years column, replace all missing values\n",
+    "by 3, and in the age column replace all the missing values by the mean of the column.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>experience_years</th>\n",
+       "      <th>age</th>\n",
+       "      <th>salary</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1.1</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>39343</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1.3</td>\n",
+       "      <td>24.0</td>\n",
+       "      <td>46205</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1.5</td>\n",
+       "      <td>28.7</td>\n",
+       "      <td>37731</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>31.0</td>\n",
+       "      <td>43525</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2.2</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>39891</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>2.9</td>\n",
+       "      <td>33.0</td>\n",
+       "      <td>56642</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>3.0</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>60150</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>3.2</td>\n",
+       "      <td>34.5</td>\n",
+       "      <td>54445</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>28.3</td>\n",
+       "      <td>64445</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>3.7</td>\n",
+       "      <td>29.6</td>\n",
+       "      <td>57189</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>3.9</td>\n",
+       "      <td>28.9</td>\n",
+       "      <td>63218</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>4.0</td>\n",
+       "      <td>34.0</td>\n",
+       "      <td>55794</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>4.0</td>\n",
+       "      <td>29.5</td>\n",
+       "      <td>56957</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>4.1</td>\n",
+       "      <td>24.8</td>\n",
+       "      <td>57081</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>4.5</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>61111</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>15</th>\n",
+       "      <td>4.9</td>\n",
+       "      <td>29.2</td>\n",
+       "      <td>67938</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>16</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>66029</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17</th>\n",
+       "      <td>5.3</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>83088</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18</th>\n",
+       "      <td>5.9</td>\n",
+       "      <td>28.0</td>\n",
+       "      <td>81363</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>19</th>\n",
+       "      <td>6.0</td>\n",
+       "      <td>29.3</td>\n",
+       "      <td>93940</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>20</th>\n",
+       "      <td>6.8</td>\n",
+       "      <td>33.2</td>\n",
+       "      <td>91738</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>21</th>\n",
+       "      <td>7.1</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>98273</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>22</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>31.4</td>\n",
+       "      <td>101302</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>23</th>\n",
+       "      <td>8.2</td>\n",
+       "      <td>32.0</td>\n",
+       "      <td>113812</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>24</th>\n",
+       "      <td>8.7</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>109431</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25</th>\n",
+       "      <td>9.0</td>\n",
+       "      <td>34.0</td>\n",
+       "      <td>105582</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>26</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>116969</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>27</th>\n",
+       "      <td>9.6</td>\n",
+       "      <td>36.0</td>\n",
+       "      <td>112635</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>28</th>\n",
+       "      <td>10.3</td>\n",
+       "      <td>37.0</td>\n",
+       "      <td>122391</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>29</th>\n",
+       "      <td>10.5</td>\n",
+       "      <td>38.0</td>\n",
+       "      <td>121872</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    experience_years   age  salary\n",
+       "0                1.1   NaN   39343\n",
+       "1                1.3  24.0   46205\n",
+       "2                1.5  28.7   37731\n",
+       "3                NaN  31.0   43525\n",
+       "4                2.2   NaN   39891\n",
+       "5                2.9  33.0   56642\n",
+       "6                3.0   NaN   60150\n",
+       "7                3.2  34.5   54445\n",
+       "8                NaN  28.3   64445\n",
+       "9                3.7  29.6   57189\n",
+       "10               3.9  28.9   63218\n",
+       "11               4.0  34.0   55794\n",
+       "12               4.0  29.5   56957\n",
+       "13               4.1  24.8   57081\n",
+       "14               4.5  35.0   61111\n",
+       "15               4.9  29.2   67938\n",
+       "16               NaN  26.0   66029\n",
+       "17               5.3   NaN   83088\n",
+       "18               5.9  28.0   81363\n",
+       "19               6.0  29.3   93940\n",
+       "20               6.8  33.2   91738\n",
+       "21               7.1  30.0   98273\n",
+       "22               NaN  31.4  101302\n",
+       "23               8.2  32.0  113812\n",
+       "24               8.7   NaN  109431\n",
+       "25               9.0  34.0  105582\n",
+       "26               NaN  35.0  116969\n",
+       "27               9.6  36.0  112635\n",
+       "28              10.3  37.0  122391\n",
+       "29              10.5  38.0  121872"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Import the dataset\n",
+    "salary = pd.read_csv('salary.csv')\n",
+    "salary"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>experience_years</th>\n",
+       "      <th>age</th>\n",
+       "      <th>salary</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1.1</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>39343</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1.3</td>\n",
+       "      <td>24.0</td>\n",
+       "      <td>46205</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1.5</td>\n",
+       "      <td>28.7</td>\n",
+       "      <td>37731</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>31.0</td>\n",
+       "      <td>43525</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2.2</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>39891</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   experience_years   age  salary\n",
+       "0               1.1   NaN   39343\n",
+       "1               1.3  24.0   46205\n",
+       "2               1.5  28.7   37731\n",
+       "3               NaN  31.0   43525\n",
+       "4               2.2   NaN   39891"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Check the types of variables in the dataset\n",
+    "# gender and edu are categorical values while others are numerics\n",
+    "salary.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(30, 3)"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "salary.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 30 entries, 0 to 29\n",
+      "Data columns (total 3 columns):\n",
+      " #   Column            Non-Null Count  Dtype  \n",
+      "---  ------            --------------  -----  \n",
+      " 0   experience_years  25 non-null     float64\n",
+      " 1   age               25 non-null     float64\n",
+      " 2   salary            30 non-null     int64  \n",
+      "dtypes: float64(2), int64(1)\n",
+      "memory usage: 848.0 bytes\n"
+     ]
+    }
+   ],
+   "source": [
+    "salary.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>experience_years</th>\n",
+       "      <th>age</th>\n",
+       "      <th>salary</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>25.000000</td>\n",
+       "      <td>25.000000</td>\n",
+       "      <td>30.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>5.268000</td>\n",
+       "      <td>31.216000</td>\n",
+       "      <td>76003.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>2.841613</td>\n",
+       "      <td>3.712892</td>\n",
+       "      <td>27414.429785</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>1.100000</td>\n",
+       "      <td>24.000000</td>\n",
+       "      <td>37731.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>3.200000</td>\n",
+       "      <td>28.900000</td>\n",
+       "      <td>56720.750000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>4.500000</td>\n",
+       "      <td>31.000000</td>\n",
+       "      <td>65237.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>7.100000</td>\n",
+       "      <td>34.000000</td>\n",
+       "      <td>100544.750000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>10.500000</td>\n",
+       "      <td>38.000000</td>\n",
+       "      <td>122391.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       experience_years        age         salary\n",
+       "count         25.000000  25.000000      30.000000\n",
+       "mean           5.268000  31.216000   76003.000000\n",
+       "std            2.841613   3.712892   27414.429785\n",
+       "min            1.100000  24.000000   37731.000000\n",
+       "25%            3.200000  28.900000   56720.750000\n",
+       "50%            4.500000  31.000000   65237.000000\n",
+       "75%            7.100000  34.000000  100544.750000\n",
+       "max           10.500000  38.000000  122391.000000"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "salary.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0      1.1\n",
+       "1      1.3\n",
+       "2      1.5\n",
+       "3      NaN\n",
+       "4      2.2\n",
+       "5      2.9\n",
+       "6      3.0\n",
+       "7      3.2\n",
+       "8      NaN\n",
+       "9      3.7\n",
+       "10     3.9\n",
+       "11     4.0\n",
+       "12     4.0\n",
+       "13     4.1\n",
+       "14     4.5\n",
+       "15     4.9\n",
+       "16     NaN\n",
+       "17     5.3\n",
+       "18     5.9\n",
+       "19     6.0\n",
+       "20     6.8\n",
+       "21     7.1\n",
+       "22     NaN\n",
+       "23     8.2\n",
+       "24     8.7\n",
+       "25     9.0\n",
+       "26     NaN\n",
+       "27     9.6\n",
+       "28    10.3\n",
+       "29    10.5\n",
+       "Name: experience_years, dtype: float64"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "experience_data = pd.Series(salary['experience_years'])\n",
+    "\n",
+    "experience_data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0     False\n",
+       "1     False\n",
+       "2     False\n",
+       "3      True\n",
+       "4     False\n",
+       "5     False\n",
+       "6     False\n",
+       "7     False\n",
+       "8      True\n",
+       "9     False\n",
+       "10    False\n",
+       "11    False\n",
+       "12    False\n",
+       "13    False\n",
+       "14    False\n",
+       "15    False\n",
+       "16     True\n",
+       "17    False\n",
+       "18    False\n",
+       "19    False\n",
+       "20    False\n",
+       "21    False\n",
+       "22     True\n",
+       "23    False\n",
+       "24    False\n",
+       "25    False\n",
+       "26     True\n",
+       "27    False\n",
+       "28    False\n",
+       "29    False\n",
+       "Name: experience_years, dtype: bool"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "experience_data.isnull()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# If we take the sum of the above expression, we get the number of missing values\n",
+    "\n",
+    "experience_data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "As we can see it is 5"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0      1.1\n",
+       "1      1.3\n",
+       "2      1.5\n",
+       "3      3.0\n",
+       "4      2.2\n",
+       "5      2.9\n",
+       "6      3.0\n",
+       "7      3.2\n",
+       "8      3.0\n",
+       "9      3.7\n",
+       "10     3.9\n",
+       "11     4.0\n",
+       "12     4.0\n",
+       "13     4.1\n",
+       "14     4.5\n",
+       "15     4.9\n",
+       "16     3.0\n",
+       "17     5.3\n",
+       "18     5.9\n",
+       "19     6.0\n",
+       "20     6.8\n",
+       "21     7.1\n",
+       "22     3.0\n",
+       "23     8.2\n",
+       "24     8.7\n",
+       "25     9.0\n",
+       "26     3.0\n",
+       "27     9.6\n",
+       "28    10.3\n",
+       "29    10.5\n",
+       "Name: experience_years, dtype: float64"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "experience_data.fillna(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "----in the age column replace all the missing values by the mean of the column"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0      NaN\n",
+       "1     24.0\n",
+       "2     28.7\n",
+       "3     31.0\n",
+       "4      NaN\n",
+       "5     33.0\n",
+       "6      NaN\n",
+       "7     34.5\n",
+       "8     28.3\n",
+       "9     29.6\n",
+       "10    28.9\n",
+       "11    34.0\n",
+       "12    29.5\n",
+       "13    24.8\n",
+       "14    35.0\n",
+       "15    29.2\n",
+       "16    26.0\n",
+       "17     NaN\n",
+       "18    28.0\n",
+       "19    29.3\n",
+       "20    33.2\n",
+       "21    30.0\n",
+       "22    31.4\n",
+       "23    32.0\n",
+       "24     NaN\n",
+       "25    34.0\n",
+       "26    35.0\n",
+       "27    36.0\n",
+       "28    37.0\n",
+       "29    38.0\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "age_data = pd.Series(salary['age'])\n",
+    "\n",
+    "age_data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0     31.216\n",
+       "1     24.000\n",
+       "2     28.700\n",
+       "3     31.000\n",
+       "4     31.216\n",
+       "5     33.000\n",
+       "6     31.216\n",
+       "7     34.500\n",
+       "8     28.300\n",
+       "9     29.600\n",
+       "10    28.900\n",
+       "11    34.000\n",
+       "12    29.500\n",
+       "13    24.800\n",
+       "14    35.000\n",
+       "15    29.200\n",
+       "16    26.000\n",
+       "17    31.216\n",
+       "18    28.000\n",
+       "19    29.300\n",
+       "20    33.200\n",
+       "21    30.000\n",
+       "22    31.400\n",
+       "23    32.000\n",
+       "24    31.216\n",
+       "25    34.000\n",
+       "26    35.000\n",
+       "27    36.000\n",
+       "28    37.000\n",
+       "29    38.000\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "age_data.fillna(age_data.mean())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "salary['age'].fillna(int(salary['age'].mean()), inplace=True)\n",
+    "salary['experience_years'].fillna(3, inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    experience_years   age  salary\n",
+      "0                1.1  31.0   39343\n",
+      "1                1.3  24.0   46205\n",
+      "2                1.5  28.7   37731\n",
+      "3                3.0  31.0   43525\n",
+      "4                2.2  31.0   39891\n",
+      "5                2.9  33.0   56642\n",
+      "6                3.0  31.0   60150\n",
+      "7                3.2  34.5   54445\n",
+      "8                3.0  28.3   64445\n",
+      "9                3.7  29.6   57189\n",
+      "10               3.9  28.9   63218\n",
+      "11               4.0  34.0   55794\n",
+      "12               4.0  29.5   56957\n",
+      "13               4.1  24.8   57081\n",
+      "14               4.5  35.0   61111\n",
+      "15               4.9  29.2   67938\n",
+      "16               3.0  26.0   66029\n",
+      "17               5.3  31.0   83088\n",
+      "18               5.9  28.0   81363\n",
+      "19               6.0  29.3   93940\n",
+      "20               6.8  33.2   91738\n",
+      "21               7.1  30.0   98273\n",
+      "22               3.0  31.4  101302\n",
+      "23               8.2  32.0  113812\n",
+      "24               8.7  31.0  109431\n",
+      "25               9.0  34.0  105582\n",
+      "26               3.0  35.0  116969\n",
+      "27               9.6  36.0  112635\n",
+      "28              10.3  37.0  122391\n",
+      "29              10.5  38.0  121872\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(salary)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "b) Check the correlation between the columns of the data. Based on the results, what is your opinion,\n",
+    "does experience or age impact salary more?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "   - Check the correlation between the columns of the data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>experience_years</th>\n",
+       "      <th>age</th>\n",
+       "      <th>salary</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>experience_years</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.535703</td>\n",
+       "      <td>0.834603</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>age</th>\n",
+       "      <td>0.535703</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.523353</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>salary</th>\n",
+       "      <td>0.834603</td>\n",
+       "      <td>0.523353</td>\n",
+       "      <td>1.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                  experience_years       age    salary\n",
+       "experience_years          1.000000  0.535703  0.834603\n",
+       "age                       0.535703  1.000000  0.523353\n",
+       "salary                    0.834603  0.523353  1.000000"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "salary.corr()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "correlation between Experience years and Age is 0.5357028471981783\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Calculate the correlation between Experience years\tand Age\n",
+    "exp_age=salary['experience_years'].corr(salary['age'])\n",
+    "print('correlation between Experience years and Age is', exp_age)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "correlation between Experience years and Salary is 0.8346030993050744\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Calculate the correlation between Experience years\tand Salary\n",
+    "exp_salary=salary['experience_years'].corr(salary['salary'])\n",
+    "print('correlation between Experience years and Salary is', exp_salary)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "correlation between Salary and Age is 0.523352990905591\n"
+     ]
+    }
+   ],
+   "source": [
+    "#Calculate the correlation between Salary years\tand Age\n",
+    "salary_age=salary['salary'].corr(salary['age'])\n",
+    "print('correlation between Salary and Age is', salary_age)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "???Based on the results, what is your opinion, does experience or age impact salary more?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[1.        , 0.53570285],\n",
+       "       [0.53570285, 1.        ]])"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "np.corrcoef(salary['experience_years'], salary['age'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    " --->>>Correlation coefficients whose magnitude are between 0.7 and 0.9 indicate variables which can be considered highly correlated. Correlation coefficients whose magnitude are between 0.5 and 0.7 indicate variables which can be considered moderately correlated"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "LinregressResult(slope=0.6643869031301838, intercept=27.9311480436934, rvalue=0.5357028471981783, pvalue=0.002281606945714231, stderr=0.1979108925555436)"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from scipy.stats import linregress\n",
+    "linregress(salary['experience_years'], salary['age'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Since the p-value of 0.0022 is smaller than 0.05, we reject the null hypothesis that the relationship between the age and their work experience is not significant."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Create a categorical version of the salary column with 3 groups: (i) values between 0 and 55000, (ii)\n",
+    "values between 55000 and 90000, (iii) values between 90000 and 125000. Label the groups [’Low’,\n",
+    "’Medium’, ’High’]. Calculate the average age of employees who have High salary."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Group LOW    experience_years   age  salary\n",
+      "0               1.1  31.0   39343\n",
+      "1               1.3  24.0   46205\n",
+      "2               1.5  28.7   37731\n",
+      "3               3.0  31.0   43525\n",
+      "4               2.2  31.0   39891\n",
+      "7               3.2  34.5   54445\n",
+      "Group MEDIUM     experience_years   age  salary\n",
+      "5                2.9  33.0   56642\n",
+      "6                3.0  31.0   60150\n",
+      "8                3.0  28.3   64445\n",
+      "9                3.7  29.6   57189\n",
+      "10               3.9  28.9   63218\n",
+      "11               4.0  34.0   55794\n",
+      "12               4.0  29.5   56957\n",
+      "13               4.1  24.8   57081\n",
+      "14               4.5  35.0   61111\n",
+      "15               4.9  29.2   67938\n",
+      "16               3.0  26.0   66029\n",
+      "17               5.3  31.0   83088\n",
+      "18               5.9  28.0   81363\n",
+      "Group HIGH     experience_years   age  salary\n",
+      "19               6.0  29.3   93940\n",
+      "20               6.8  33.2   91738\n",
+      "21               7.1  30.0   98273\n",
+      "22               3.0  31.4  101302\n",
+      "23               8.2  32.0  113812\n",
+      "24               8.7  31.0  109431\n",
+      "25               9.0  34.0  105582\n",
+      "26               3.0  35.0  116969\n",
+      "27               9.6  36.0  112635\n",
+      "28              10.3  37.0  122391\n",
+      "29              10.5  38.0  121872\n"
+     ]
+    }
+   ],
+   "source": [
+    "Low=salary[(salary['salary']>0) & (salary['salary']<55000)]\n",
+    "Medium=salary[(salary['salary']>55000) & (salary['salary']<90000)]\n",
+    "High=salary[(salary['salary']>90000) & (salary['salary']<125000)]\n",
+    "print ('Group LOW', \n",
+    "       Low)\n",
+    "print ('Group MEDIUM', \n",
+    "       Medium)\n",
+    "print ('Group HIGH', \n",
+    "       High)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "- Calculate the average age of employees who have High salary"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The average age of employees who have High salary:\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "33.35454545454545"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "print('The average age of employees who have High salary:')\n",
+    "High[\"age\"].mean()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# QUESTION 3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In this exercise, you will have to work with a dataset about movies (movies.csv). In the\n",
+    "dataset, you can find information about: (i) movie title, (ii) short overview of the movie, (iii) the original\n",
+    "language, (iv) number of votes given by people who have seen the movie, and (v) the average of the votes\n",
+    "for the movie (a vote is between 0 and 10). You need to write the code to answer the following questions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 121,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Unnamed: 0</th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>Ad Astra</td>\n",
+       "      <td>The near future, a time when both hope and har...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2853</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Bloodshot</td>\n",
+       "      <td>After he and his wife are murdered, marine Ray...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>1349</td>\n",
+       "      <td>7.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>2</td>\n",
+       "      <td>Bad Boys for Life</td>\n",
+       "      <td>Marcus and Mike are forced to confront new thr...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2530</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>3</td>\n",
+       "      <td>Ant-Man</td>\n",
+       "      <td>Armed with the astonishing ability to shrink i...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>13611</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>4</td>\n",
+       "      <td>Percy Jackson: Sea of Monsters</td>\n",
+       "      <td>In their quest to confront the ultimate evil, ...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>3542</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9995</th>\n",
+       "      <td>9995</td>\n",
+       "      <td>Cargo</td>\n",
+       "      <td>The story of CARGO takes place on rusty space-...</td>\n",
+       "      <td>de</td>\n",
+       "      <td>225</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9996</th>\n",
+       "      <td>9996</td>\n",
+       "      <td>The Good Night</td>\n",
+       "      <td>Gary, a musician, is trapped in an unhappy rel...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>67</td>\n",
+       "      <td>5.6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9997</th>\n",
+       "      <td>9997</td>\n",
+       "      <td>The World Is Yours</td>\n",
+       "      <td>To escape his life of crime, a Paris drug deal...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>234</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9998</th>\n",
+       "      <td>9998</td>\n",
+       "      <td>The Grand Seduction</td>\n",
+       "      <td>A small fishing village must procure a local d...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>169</td>\n",
+       "      <td>6.7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9999</th>\n",
+       "      <td>9999</td>\n",
+       "      <td>Woochi: The Demon Slayer</td>\n",
+       "      <td>Spanning four centuries in Korea, this epic ac...</td>\n",
+       "      <td>ko</td>\n",
+       "      <td>78</td>\n",
+       "      <td>6.7</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>10000 rows × 6 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Unnamed: 0                           title  \\\n",
+       "0              0                        Ad Astra   \n",
+       "1              1                       Bloodshot   \n",
+       "2              2               Bad Boys for Life   \n",
+       "3              3                         Ant-Man   \n",
+       "4              4  Percy Jackson: Sea of Monsters   \n",
+       "...          ...                             ...   \n",
+       "9995        9995                           Cargo   \n",
+       "9996        9996                  The Good Night   \n",
+       "9997        9997              The World Is Yours   \n",
+       "9998        9998             The Grand Seduction   \n",
+       "9999        9999        Woochi: The Demon Slayer   \n",
+       "\n",
+       "                                               overview original_language  \\\n",
+       "0     The near future, a time when both hope and har...                en   \n",
+       "1     After he and his wife are murdered, marine Ray...                en   \n",
+       "2     Marcus and Mike are forced to confront new thr...                en   \n",
+       "3     Armed with the astonishing ability to shrink i...                en   \n",
+       "4     In their quest to confront the ultimate evil, ...                en   \n",
+       "...                                                 ...               ...   \n",
+       "9995  The story of CARGO takes place on rusty space-...                de   \n",
+       "9996  Gary, a musician, is trapped in an unhappy rel...                en   \n",
+       "9997  To escape his life of crime, a Paris drug deal...                fr   \n",
+       "9998  A small fishing village must procure a local d...                en   \n",
+       "9999  Spanning four centuries in Korea, this epic ac...                ko   \n",
+       "\n",
+       "      vote_count  vote_average  \n",
+       "0           2853           5.9  \n",
+       "1           1349           7.2  \n",
+       "2           2530           7.1  \n",
+       "3          13611           7.1  \n",
+       "4           3542           5.9  \n",
+       "...          ...           ...  \n",
+       "9995         225           5.9  \n",
+       "9996          67           5.6  \n",
+       "9997         234           7.1  \n",
+       "9998         169           6.7  \n",
+       "9999          78           6.7  \n",
+       "\n",
+       "[10000 rows x 6 columns]"
+      ]
+     },
+     "execution_count": 121,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "movies = pd.read_csv('movies.csv')\n",
+    "movies"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 122,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Ad Astra</td>\n",
+       "      <td>The near future, a time when both hope and har...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2853</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Bloodshot</td>\n",
+       "      <td>After he and his wife are murdered, marine Ray...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>1349</td>\n",
+       "      <td>7.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Bad Boys for Life</td>\n",
+       "      <td>Marcus and Mike are forced to confront new thr...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2530</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Ant-Man</td>\n",
+       "      <td>Armed with the astonishing ability to shrink i...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>13611</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Percy Jackson: Sea of Monsters</td>\n",
+       "      <td>In their quest to confront the ultimate evil, ...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>3542</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                            title  \\\n",
+       "0                        Ad Astra   \n",
+       "1                       Bloodshot   \n",
+       "2               Bad Boys for Life   \n",
+       "3                         Ant-Man   \n",
+       "4  Percy Jackson: Sea of Monsters   \n",
+       "\n",
+       "                                            overview original_language  \\\n",
+       "0  The near future, a time when both hope and har...                en   \n",
+       "1  After he and his wife are murdered, marine Ray...                en   \n",
+       "2  Marcus and Mike are forced to confront new thr...                en   \n",
+       "3  Armed with the astonishing ability to shrink i...                en   \n",
+       "4  In their quest to confront the ultimate evil, ...                en   \n",
+       "\n",
+       "   vote_count  vote_average  \n",
+       "0        2853           5.9  \n",
+       "1        1349           7.2  \n",
+       "2        2530           7.1  \n",
+       "3       13611           7.1  \n",
+       "4        3542           5.9  "
+      ]
+     },
+     "execution_count": 122,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# We have header in the file, and we can use the first column, the Un, as index\n",
+    "movies.drop(['Unnamed: 0'],axis=1,inplace=True)\n",
+    "\n",
+    "\n",
+    "movies.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 106,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(10000, 5)"
+      ]
+     },
+     "execution_count": 106,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# When we look as the shape of the data, we can see that it has 10000 rows (countries) and 6 columns (attributes of countries)\n",
+    "\n",
+    "movies.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 107,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>10000.000000</td>\n",
+       "      <td>10000.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>1020.825100</td>\n",
+       "      <td>6.306230</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>1992.305005</td>\n",
+       "      <td>1.354259</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>143.000000</td>\n",
+       "      <td>5.800000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>332.000000</td>\n",
+       "      <td>6.500000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>926.250000</td>\n",
+       "      <td>7.100000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>25148.000000</td>\n",
+       "      <td>10.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         vote_count  vote_average\n",
+       "count  10000.000000  10000.000000\n",
+       "mean    1020.825100      6.306230\n",
+       "std     1992.305005      1.354259\n",
+       "min        0.000000      0.000000\n",
+       "25%      143.000000      5.800000\n",
+       "50%      332.000000      6.500000\n",
+       "75%      926.250000      7.100000\n",
+       "max    25148.000000     10.000000"
+      ]
+     },
+     "execution_count": 107,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# In order to look at the data, for the numerical columns, we can use the describe method\n",
+    "# The count tells us the number of available values, and as we can see, there are several columns with many missing values\n",
+    "\n",
+    "movies.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 108,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 10000 entries, 0 to 9999\n",
+      "Data columns (total 5 columns):\n",
+      " #   Column             Non-Null Count  Dtype  \n",
+      "---  ------             --------------  -----  \n",
+      " 0   title              10000 non-null  object \n",
+      " 1   overview           9970 non-null   object \n",
+      " 2   original_language  10000 non-null  object \n",
+      " 3   vote_count         10000 non-null  int64  \n",
+      " 4   vote_average       10000 non-null  float64\n",
+      "dtypes: float64(1), int64(1), object(3)\n",
+      "memory usage: 390.8+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "movies.info ()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 109,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9995</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9996</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9997</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9998</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9999</th>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>10000 rows × 5 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      title  overview  original_language  vote_count  vote_average\n",
+       "0     False     False              False       False         False\n",
+       "1     False     False              False       False         False\n",
+       "2     False     False              False       False         False\n",
+       "3     False     False              False       False         False\n",
+       "4     False     False              False       False         False\n",
+       "...     ...       ...                ...         ...           ...\n",
+       "9995  False     False              False       False         False\n",
+       "9996  False     False              False       False         False\n",
+       "9997  False     False              False       False         False\n",
+       "9998  False     False              False       False         False\n",
+       "9999  False     False              False       False         False\n",
+       "\n",
+       "[10000 rows x 5 columns]"
+      ]
+     },
+     "execution_count": 109,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "movies.isnull()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 110,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "title                 0\n",
+       "overview             30\n",
+       "original_language     0\n",
+       "vote_count            0\n",
+       "vote_average          0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 110,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "movies.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "-Filter our missing data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 111,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "9970"
+      ]
+     },
+     "execution_count": 111,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# The basic command is dropna, with this we can delete all the missing values\n",
+    "# In our series, there will be 9970 values left\n",
+    "\n",
+    "movies_full = movies.dropna()\n",
+    "\n",
+    "len(movies_full)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 112,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "title                0\n",
+       "overview             0\n",
+       "original_language    0\n",
+       "vote_count           0\n",
+       "vote_average         0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 112,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# As we can check, it has no missing values anymore\n",
+    "\n",
+    "movies_full.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 113,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Ad Astra</td>\n",
+       "      <td>The near future, a time when both hope and har...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2853</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Bloodshot</td>\n",
+       "      <td>After he and his wife are murdered, marine Ray...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>1349</td>\n",
+       "      <td>7.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Bad Boys for Life</td>\n",
+       "      <td>Marcus and Mike are forced to confront new thr...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2530</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Ant-Man</td>\n",
+       "      <td>Armed with the astonishing ability to shrink i...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>13611</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Percy Jackson: Sea of Monsters</td>\n",
+       "      <td>In their quest to confront the ultimate evil, ...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>3542</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9995</th>\n",
+       "      <td>Cargo</td>\n",
+       "      <td>The story of CARGO takes place on rusty space-...</td>\n",
+       "      <td>de</td>\n",
+       "      <td>225</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9996</th>\n",
+       "      <td>The Good Night</td>\n",
+       "      <td>Gary, a musician, is trapped in an unhappy rel...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>67</td>\n",
+       "      <td>5.6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9997</th>\n",
+       "      <td>The World Is Yours</td>\n",
+       "      <td>To escape his life of crime, a Paris drug deal...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>234</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9998</th>\n",
+       "      <td>The Grand Seduction</td>\n",
+       "      <td>A small fishing village must procure a local d...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>169</td>\n",
+       "      <td>6.7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9999</th>\n",
+       "      <td>Woochi: The Demon Slayer</td>\n",
+       "      <td>Spanning four centuries in Korea, this epic ac...</td>\n",
+       "      <td>ko</td>\n",
+       "      <td>78</td>\n",
+       "      <td>6.7</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>10000 rows × 5 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  \\\n",
+       "0                           Ad Astra   \n",
+       "1                          Bloodshot   \n",
+       "2                  Bad Boys for Life   \n",
+       "3                            Ant-Man   \n",
+       "4     Percy Jackson: Sea of Monsters   \n",
+       "...                              ...   \n",
+       "9995                           Cargo   \n",
+       "9996                  The Good Night   \n",
+       "9997              The World Is Yours   \n",
+       "9998             The Grand Seduction   \n",
+       "9999        Woochi: The Demon Slayer   \n",
+       "\n",
+       "                                               overview original_language  \\\n",
+       "0     The near future, a time when both hope and har...                en   \n",
+       "1     After he and his wife are murdered, marine Ray...                en   \n",
+       "2     Marcus and Mike are forced to confront new thr...                en   \n",
+       "3     Armed with the astonishing ability to shrink i...                en   \n",
+       "4     In their quest to confront the ultimate evil, ...                en   \n",
+       "...                                                 ...               ...   \n",
+       "9995  The story of CARGO takes place on rusty space-...                de   \n",
+       "9996  Gary, a musician, is trapped in an unhappy rel...                en   \n",
+       "9997  To escape his life of crime, a Paris drug deal...                fr   \n",
+       "9998  A small fishing village must procure a local d...                en   \n",
+       "9999  Spanning four centuries in Korea, this epic ac...                ko   \n",
+       "\n",
+       "      vote_count  vote_average  \n",
+       "0           2853           5.9  \n",
+       "1           1349           7.2  \n",
+       "2           2530           7.1  \n",
+       "3          13611           7.1  \n",
+       "4           3542           5.9  \n",
+       "...          ...           ...  \n",
+       "9995         225           5.9  \n",
+       "9996          67           5.6  \n",
+       "9997         234           7.1  \n",
+       "9998         169           6.7  \n",
+       "9999          78           6.7  \n",
+       "\n",
+       "[10000 rows x 5 columns]"
+      ]
+     },
+     "execution_count": 113,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Alternatively, we can use the following code to drop all the missing values\n",
+    "\n",
+    "movies[movies.notnull()]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "a) Evaluations that are based on too few votes cannot be completely trusted. For this reason, start\n",
+    "by removing movies that has less than 100 votes (vote count). Perform the following tasks on this\n",
+    "filtered dataset."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    " - Filter movies that has less than 100 votes (vote count)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 128,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>vote_count</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>title</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>#Iamhere</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>#RealityHigh</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>'71</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>'83</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>(500) Days of Summer</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                      vote_count\n",
+       "title                           \n",
+       "#Iamhere                       1\n",
+       "#RealityHigh                   1\n",
+       "'71                            1\n",
+       "'83                            1\n",
+       "(500) Days of Summer           1"
+      ]
+     },
+     "execution_count": 128,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rating_by_users=movies.groupby(['title'])['vote_count'].size()\n",
+    "rating_by_users= pd.DataFrame(rating_by_users)\n",
+    "rating_by_users.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 129,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Ad Astra</td>\n",
+       "      <td>The near future, a time when both hope and har...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2853</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Bloodshot</td>\n",
+       "      <td>After he and his wife are murdered, marine Ray...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>1349</td>\n",
+       "      <td>7.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Bad Boys for Life</td>\n",
+       "      <td>Marcus and Mike are forced to confront new thr...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>2530</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Ant-Man</td>\n",
+       "      <td>Armed with the astonishing ability to shrink i...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>13611</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Percy Jackson: Sea of Monsters</td>\n",
+       "      <td>In their quest to confront the ultimate evil, ...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>3542</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9992</th>\n",
+       "      <td>Eagle vs Shark</td>\n",
+       "      <td>The New Zealand made \"Eagle vs Shark\" is the t...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>154</td>\n",
+       "      <td>6.6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9993</th>\n",
+       "      <td>High Flying Bird</td>\n",
+       "      <td>During an NBA lockout, a sports agent, Ray Bur...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>124</td>\n",
+       "      <td>5.8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9995</th>\n",
+       "      <td>Cargo</td>\n",
+       "      <td>The story of CARGO takes place on rusty space-...</td>\n",
+       "      <td>de</td>\n",
+       "      <td>225</td>\n",
+       "      <td>5.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9997</th>\n",
+       "      <td>The World Is Yours</td>\n",
+       "      <td>To escape his life of crime, a Paris drug deal...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>234</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9998</th>\n",
+       "      <td>The Grand Seduction</td>\n",
+       "      <td>A small fishing village must procure a local d...</td>\n",
+       "      <td>en</td>\n",
+       "      <td>169</td>\n",
+       "      <td>6.7</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>8405 rows × 5 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  \\\n",
+       "0                           Ad Astra   \n",
+       "1                          Bloodshot   \n",
+       "2                  Bad Boys for Life   \n",
+       "3                            Ant-Man   \n",
+       "4     Percy Jackson: Sea of Monsters   \n",
+       "...                              ...   \n",
+       "9992                  Eagle vs Shark   \n",
+       "9993                High Flying Bird   \n",
+       "9995                           Cargo   \n",
+       "9997              The World Is Yours   \n",
+       "9998             The Grand Seduction   \n",
+       "\n",
+       "                                               overview original_language  \\\n",
+       "0     The near future, a time when both hope and har...                en   \n",
+       "1     After he and his wife are murdered, marine Ray...                en   \n",
+       "2     Marcus and Mike are forced to confront new thr...                en   \n",
+       "3     Armed with the astonishing ability to shrink i...                en   \n",
+       "4     In their quest to confront the ultimate evil, ...                en   \n",
+       "...                                                 ...               ...   \n",
+       "9992  The New Zealand made \"Eagle vs Shark\" is the t...                en   \n",
+       "9993  During an NBA lockout, a sports agent, Ray Bur...                en   \n",
+       "9995  The story of CARGO takes place on rusty space-...                de   \n",
+       "9997  To escape his life of crime, a Paris drug deal...                fr   \n",
+       "9998  A small fishing village must procure a local d...                en   \n",
+       "\n",
+       "      vote_count  vote_average  \n",
+       "0           2853           5.9  \n",
+       "1           1349           7.2  \n",
+       "2           2530           7.1  \n",
+       "3          13611           7.1  \n",
+       "4           3542           5.9  \n",
+       "...          ...           ...  \n",
+       "9992         154           6.6  \n",
+       "9993         124           5.8  \n",
+       "9995         225           5.9  \n",
+       "9997         234           7.1  \n",
+       "9998         169           6.7  \n",
+       "\n",
+       "[8405 rows x 5 columns]"
+      ]
+     },
+     "execution_count": 129,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "active_user= movies.loc[movies.vote_count>=100]\n",
+    "active_user"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 181,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "vote_count\n",
+       "100      30\n",
+       "101      24\n",
+       "102      31\n",
+       "103      23\n",
+       "104      20\n",
+       "         ..\n",
+       "21561     1\n",
+       "21589     1\n",
+       "21893     1\n",
+       "22225     1\n",
+       "25148     1\n",
+       "Length: 2673, dtype: int64"
+      ]
+     },
+     "execution_count": 181,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "rating_user=active_user.groupby('vote_count').size()\n",
+    "rating_user"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "b) What is the 3rd most frequent original language in the data?\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 139,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "en    7197\n",
+       "fr     328\n",
+       "ja     190\n",
+       "it     132\n",
+       "es     109\n",
+       "de      74\n",
+       "cn      54\n",
+       "hi      51\n",
+       "ko      50\n",
+       "zh      42\n",
+       "ru      34\n",
+       "da      27\n",
+       "sv      25\n",
+       "pt      18\n",
+       "no       9\n",
+       "tr       8\n",
+       "pl       7\n",
+       "nl       6\n",
+       "id       5\n",
+       "fa       5\n",
+       "th       4\n",
+       "sr       3\n",
+       "hu       3\n",
+       "he       2\n",
+       "el       2\n",
+       "ta       2\n",
+       "ar       2\n",
+       "te       2\n",
+       "fi       2\n",
+       "cs       2\n",
+       "uk       1\n",
+       "et       1\n",
+       "nb       1\n",
+       "la       1\n",
+       "ro       1\n",
+       "bs       1\n",
+       "eu       1\n",
+       "af       1\n",
+       "xx       1\n",
+       "sh       1\n",
+       "Name: original_language, dtype: int64"
+      ]
+     },
+     "execution_count": 139,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "active_user[\"original_language\"].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "c) How many Finnish movies are in the data (original language is fi), and which is the highest rated\n",
+    "one?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 182,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['en', 'fr', 'es', 'tr', 'ko', 'it', 'ja', 'pl', 'cn', 'da', 'hi',\n",
+       "       'sv', 'el', 'de', 'ar', 'ru', 'zh', 'pt', 'no', 'th', 'sr', 'id',\n",
+       "       'te', 'xx', 'hu', 'sh', 'fa', 'la', 'nl', 'he', 'nb', 'bs', 'cs',\n",
+       "       'eu', 'fi', 'af', 'ta', 'et', 'uk', 'ro'], dtype=object)"
+      ]
+     },
+     "execution_count": 182,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "active_user.original_language.unique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 185,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>6553</th>\n",
+       "      <td>The Man Without a Past</td>\n",
+       "      <td>The second part of Aki Kaurismäki's \"Finland\" ...</td>\n",
+       "      <td>fi</td>\n",
+       "      <td>143</td>\n",
+       "      <td>7.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7142</th>\n",
+       "      <td>Rare Exports: A Christmas Tale</td>\n",
+       "      <td>It's the eve of Christmas in northern Finland ...</td>\n",
+       "      <td>fi</td>\n",
+       "      <td>269</td>\n",
+       "      <td>6.4</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  \\\n",
+       "6553          The Man Without a Past   \n",
+       "7142  Rare Exports: A Christmas Tale   \n",
+       "\n",
+       "                                               overview original_language  \\\n",
+       "6553  The second part of Aki Kaurismäki's \"Finland\" ...                fi   \n",
+       "7142  It's the eve of Christmas in northern Finland ...                fi   \n",
+       "\n",
+       "      vote_count  vote_average  \n",
+       "6553         143           7.4  \n",
+       "7142         269           6.4  "
+      ]
+     },
+     "execution_count": 185,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "finnish_movies=active_user.loc[movies.original_language.isin(['fi'])]\n",
+    "finnish_movies"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 186,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th>original_language</th>\n",
+       "      <th>fi</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>title</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Rare Exports: A Christmas Tale</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>The Man Without a Past</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "original_language               fi\n",
+       "title                             \n",
+       "Rare Exports: A Christmas Tale   1\n",
+       "The Man Without a Past           1"
+      ]
+     },
+     "execution_count": 186,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "highest_rated=finnish_movies.pivot_table('vote_count', index='title', \n",
+    "                          columns=('original_language'), aggfunc='size')\n",
+    "highest_rated"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 187,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>7142</th>\n",
+       "      <td>Rare Exports: A Christmas Tale</td>\n",
+       "      <td>It's the eve of Christmas in northern Finland ...</td>\n",
+       "      <td>fi</td>\n",
+       "      <td>269</td>\n",
+       "      <td>6.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6553</th>\n",
+       "      <td>The Man Without a Past</td>\n",
+       "      <td>The second part of Aki Kaurismäki's \"Finland\" ...</td>\n",
+       "      <td>fi</td>\n",
+       "      <td>143</td>\n",
+       "      <td>7.4</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                               title  \\\n",
+       "7142  Rare Exports: A Christmas Tale   \n",
+       "6553          The Man Without a Past   \n",
+       "\n",
+       "                                               overview original_language  \\\n",
+       "7142  It's the eve of Christmas in northern Finland ...                fi   \n",
+       "6553  The second part of Aki Kaurismäki's \"Finland\" ...                fi   \n",
+       "\n",
+       "      vote_count  vote_average  \n",
+       "7142         269           6.4  \n",
+       "6553         143           7.4  "
+      ]
+     },
+     "execution_count": 187,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# the highest rated Finnish movies, from highest to lowesr\n",
+    "# based on vote_count\n",
+    "finnish_movies.sort_values(by='vote_count', ascending=False)[:3]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "d) Calculate the average of votes separately for all French (original language is fr) and Spanish (original\n",
+    "language is es) movies. Which country has higher average value?\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 188,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>original_language</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>8405</td>\n",
+       "      <td>8405</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>unique</th>\n",
+       "      <td>8155</td>\n",
+       "      <td>40</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>top</th>\n",
+       "      <td>Beauty and the Beast</td>\n",
+       "      <td>en</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>freq</th>\n",
+       "      <td>4</td>\n",
+       "      <td>7197</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                       title original_language\n",
+       "count                   8405              8405\n",
+       "unique                  8155                40\n",
+       "top     Beauty and the Beast                en\n",
+       "freq                       4              7197"
+      ]
+     },
+     "execution_count": 188,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "active_user[[\"title\", \"original_language\"]].describe()\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Filter French and Spanish movies from orginal data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 189,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>title</th>\n",
+       "      <th>overview</th>\n",
+       "      <th>original_language</th>\n",
+       "      <th>vote_count</th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Cold Blood</td>\n",
+       "      <td>A legendary but retired hit man lives in peace...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>119</td>\n",
+       "      <td>5.1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>The Platform</td>\n",
+       "      <td>A mysterious place, an indescribable prison, a...</td>\n",
+       "      <td>es</td>\n",
+       "      <td>1924</td>\n",
+       "      <td>7.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>137</th>\n",
+       "      <td>Desire</td>\n",
+       "      <td>In a social context deteriorated by a countryw...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>215</td>\n",
+       "      <td>4.7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>204</th>\n",
+       "      <td>The Occupant</td>\n",
+       "      <td>An unemployed executive is forced to sell his ...</td>\n",
+       "      <td>es</td>\n",
+       "      <td>232</td>\n",
+       "      <td>6.3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>225</th>\n",
+       "      <td>Portrait of a Lady on Fire</td>\n",
+       "      <td>On an isolated island in Brittany at the end o...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>477</td>\n",
+       "      <td>8.2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9881</th>\n",
+       "      <td>The Phantom of Liberty</td>\n",
+       "      <td>This Surrealist film, with a title referencing...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>116</td>\n",
+       "      <td>7.6</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9899</th>\n",
+       "      <td>Belle and Sebastian: The Adventure Continues</td>\n",
+       "      <td>September, 1945. Sebastian impatiently waits f...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>218</td>\n",
+       "      <td>7.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9942</th>\n",
+       "      <td>Romina</td>\n",
+       "      <td>A shocking assault inspires horrific violence ...</td>\n",
+       "      <td>es</td>\n",
+       "      <td>109</td>\n",
+       "      <td>2.4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9967</th>\n",
+       "      <td>Belle and Sebastian</td>\n",
+       "      <td>Belle and Sebastian is set high in the snowy A...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>410</td>\n",
+       "      <td>6.9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9997</th>\n",
+       "      <td>The World Is Yours</td>\n",
+       "      <td>To escape his life of crime, a Paris drug deal...</td>\n",
+       "      <td>fr</td>\n",
+       "      <td>234</td>\n",
+       "      <td>7.1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>437 rows × 5 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                             title  \\\n",
+       "7                                       Cold Blood   \n",
+       "9                                     The Platform   \n",
+       "137                                         Desire   \n",
+       "204                                   The Occupant   \n",
+       "225                     Portrait of a Lady on Fire   \n",
+       "...                                            ...   \n",
+       "9881                        The Phantom of Liberty   \n",
+       "9899  Belle and Sebastian: The Adventure Continues   \n",
+       "9942                                        Romina   \n",
+       "9967                           Belle and Sebastian   \n",
+       "9997                            The World Is Yours   \n",
+       "\n",
+       "                                               overview original_language  \\\n",
+       "7     A legendary but retired hit man lives in peace...                fr   \n",
+       "9     A mysterious place, an indescribable prison, a...                es   \n",
+       "137   In a social context deteriorated by a countryw...                fr   \n",
+       "204   An unemployed executive is forced to sell his ...                es   \n",
+       "225   On an isolated island in Brittany at the end o...                fr   \n",
+       "...                                                 ...               ...   \n",
+       "9881  This Surrealist film, with a title referencing...                fr   \n",
+       "9899  September, 1945. Sebastian impatiently waits f...                fr   \n",
+       "9942  A shocking assault inspires horrific violence ...                es   \n",
+       "9967  Belle and Sebastian is set high in the snowy A...                fr   \n",
+       "9997  To escape his life of crime, a Paris drug deal...                fr   \n",
+       "\n",
+       "      vote_count  vote_average  \n",
+       "7            119           5.1  \n",
+       "9           1924           7.2  \n",
+       "137          215           4.7  \n",
+       "204          232           6.3  \n",
+       "225          477           8.2  \n",
+       "...          ...           ...  \n",
+       "9881         116           7.6  \n",
+       "9899         218           7.0  \n",
+       "9942         109           2.4  \n",
+       "9967         410           6.9  \n",
+       "9997         234           7.1  \n",
+       "\n",
+       "[437 rows x 5 columns]"
+      ]
+     },
+     "execution_count": 189,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "fr_es=active_user.loc[active_user.original_language.isin(['fr', 'es'])]\n",
+    "fr_es"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 190,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>vote_average</th>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>original_language</th>\n",
+       "      <th></th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>es</th>\n",
+       "      <td>6.823853</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>fr</th>\n",
+       "      <td>6.844207</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   vote_average\n",
+       "original_language              \n",
+       "es                     6.823853\n",
+       "fr                     6.844207"
+      ]
+     },
+     "execution_count": 190,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "fr_es[[\"original_language\", \"vote_average\"]].groupby(\"original_language\").mean()\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "From the above resilt, the average of votes of French movies is higher than Espaanjan ones"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "e) Create a categorical version of the vote average column with 4 groups: (i) values between 0 and 2.5,\n",
+    "(ii) values between 2.5 and 5, (iii) values between 5 and 7.5, and (iv) values between 7.5 and 10.\n",
+    "Label the groups [’Bad’, ’OK’, ’Good’, ’Excellent’]. Which of the four created groups has the highest\n",
+    "number of movies"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 195,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "title\n",
+       "#RealityHigh                  1\n",
+       "'71                           1\n",
+       "(500) Days of Summer          1\n",
+       "*batteries not included       1\n",
+       "...And Justice for All        1\n",
+       "                             ..\n",
+       "xXx                           1\n",
+       "xXx: Return of Xander Cage    1\n",
+       "xXx: State of the Union       1\n",
+       "¡Three Amigos!                1\n",
+       "Æon Flux                      1\n",
+       "Name: vote_average, Length: 8155, dtype: int64"
+      ]
+     },
+     "execution_count": 195,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "new_data=active_user.groupby('title')['vote_average'].size()\n",
+    "new_data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "-Create a categorical version of the vote average column with 4 groups"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 198,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Bad=active_user[(active_user['vote_average']>0) & (active_user['vote_average']<2.5)]\n",
+    "OK=active_user[(active_user['vote_average']>2.5) & (active_user['vote_average']<5)]\n",
+    "Good=active_user[(active_user['vote_average']>5) & (active_user['vote_average']<7.5)]\n",
+    "Excellent=active_user[(active_user['vote_average']>7.5) & (active_user['vote_average']<10)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 199,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Group Bad                          title  \\\n",
+      "8751  Manos: The Hands of Fate   \n",
+      "9942                    Romina   \n",
+      "\n",
+      "                                               overview original_language  \\\n",
+      "8751  A family gets lost on the road and stumbles up...                en   \n",
+      "9942  A shocking assault inspires horrific violence ...                es   \n",
+      "\n",
+      "      vote_count  vote_average  \n",
+      "8751         117           1.8  \n",
+      "9942         109           2.4  \n"
+     ]
+    }
+   ],
+   "source": [
+    "print ('Group Bad', Bad)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 200,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Group OK                                      title  \\\n",
+      "35             30 Days of Night: Dark Days   \n",
+      "108              Anacondas: Trail of Blood   \n",
+      "137                                 Desire   \n",
+      "345                                   Cats   \n",
+      "499   Sexual Chronicles of a French Family   \n",
+      "...                                    ...   \n",
+      "9908                       Accidental Love   \n",
+      "9917                             The Order   \n",
+      "9918                           The Clapper   \n",
+      "9920         Ace Ventura Jr: Pet Detective   \n",
+      "9985                        The Diabolical   \n",
+      "\n",
+      "                                               overview original_language  \\\n",
+      "35    After surviving the incidents in Barrow, Alask...                en   \n",
+      "108   A genetically created Anaconda, cut in half, r...                en   \n",
+      "137   In a social context deteriorated by a countryw...                fr   \n",
+      "345   A tribe of cats called the Jellicles must deci...                en   \n",
+      "499   Three generations of a French family open up a...                fr   \n",
+      "...                                                 ...               ...   \n",
+      "9908  A small town waitress gets a nail accidentally...                en   \n",
+      "9917  When Rudy, an artifacts smuggler, goes to Jeru...                en   \n",
+      "9918  15 minutes of fame destroys the life of a man ...                en   \n",
+      "9920  \"I will try to be normal\" 12-year-old Ace Vent...                en   \n",
+      "9985  When a single mother and her two young childre...                en   \n",
+      "\n",
+      "      vote_count  vote_average  \n",
+      "35           264           4.8  \n",
+      "108          133           4.2  \n",
+      "137          215           4.7  \n",
+      "345          298           4.4  \n",
+      "499          177           4.5  \n",
+      "...          ...           ...  \n",
+      "9908         204           4.0  \n",
+      "9917         114           4.3  \n",
+      "9918         134           4.9  \n",
+      "9920         101           3.0  \n",
+      "9985         121           4.8  \n",
+      "\n",
+      "[348 rows x 5 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print ('Group OK', OK)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 201,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Group Good                                title  \\\n",
+      "0                           Ad Astra   \n",
+      "1                          Bloodshot   \n",
+      "2                  Bad Boys for Life   \n",
+      "3                            Ant-Man   \n",
+      "4     Percy Jackson: Sea of Monsters   \n",
+      "...                              ...   \n",
+      "9992                  Eagle vs Shark   \n",
+      "9993                High Flying Bird   \n",
+      "9995                           Cargo   \n",
+      "9997              The World Is Yours   \n",
+      "9998             The Grand Seduction   \n",
+      "\n",
+      "                                               overview original_language  \\\n",
+      "0     The near future, a time when both hope and har...                en   \n",
+      "1     After he and his wife are murdered, marine Ray...                en   \n",
+      "2     Marcus and Mike are forced to confront new thr...                en   \n",
+      "3     Armed with the astonishing ability to shrink i...                en   \n",
+      "4     In their quest to confront the ultimate evil, ...                en   \n",
+      "...                                                 ...               ...   \n",
+      "9992  The New Zealand made \"Eagle vs Shark\" is the t...                en   \n",
+      "9993  During an NBA lockout, a sports agent, Ray Bur...                en   \n",
+      "9995  The story of CARGO takes place on rusty space-...                de   \n",
+      "9997  To escape his life of crime, a Paris drug deal...                fr   \n",
+      "9998  A small fishing village must procure a local d...                en   \n",
+      "\n",
+      "      vote_count  vote_average  \n",
+      "0           2853           5.9  \n",
+      "1           1349           7.2  \n",
+      "2           2530           7.1  \n",
+      "3          13611           7.1  \n",
+      "4           3542           5.9  \n",
+      "...          ...           ...  \n",
+      "9992         154           6.6  \n",
+      "9993         124           5.8  \n",
+      "9995         225           5.9  \n",
+      "9997         234           7.1  \n",
+      "9998         169           6.7  \n",
+      "\n",
+      "[6759 rows x 5 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print ('Group Good', Good)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 202,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Group Excellent                                              title  \\\n",
+      "14                                          Onward   \n",
+      "21                                           Joker   \n",
+      "22                           Miracle in Cell No. 7   \n",
+      "25                                        Parasite   \n",
+      "30    Harry Potter and the Deathly Hallows: Part 2   \n",
+      "...                                            ...   \n",
+      "9898                                 Pandora's Box   \n",
+      "9941                               The Diamond Arm   \n",
+      "9950                       The Ghost and Mrs. Muir   \n",
+      "9956                               Never Look Away   \n",
+      "9986                           Cool Kids Don't Cry   \n",
+      "\n",
+      "                                               overview original_language  \\\n",
+      "14    In a suburban fantasy world, two teenage elf b...                en   \n",
+      "21    During the 1980s, a failed stand-up comedian i...                en   \n",
+      "22    Separated from his daughter, a father with an ...                tr   \n",
+      "25    All unemployed, Ki-taek's family takes peculia...                ko   \n",
+      "30    Harry, Ron and Hermione continue their quest t...                en   \n",
+      "...                                                 ...               ...   \n",
+      "9898  Lulu is a young woman so beautiful and allurin...                de   \n",
+      "9941  Semyon Gorbunkov goes on a cruise with a smugg...                ru   \n",
+      "9950  In 1900, strong-willed widow Lucy Muir goes to...                en   \n",
+      "9956  Inspired by real events and spanning three era...                de   \n",
+      "9986  Adaptation of one of Benelux most famous child...                nl   \n",
+      "\n",
+      "      vote_count  vote_average  \n",
+      "14           956           8.0  \n",
+      "21         10914           8.2  \n",
+      "22          1639           8.4  \n",
+      "25          6046           8.5  \n",
+      "30         13267           8.1  \n",
+      "...          ...           ...  \n",
+      "9898         103           7.7  \n",
+      "9941         126           8.0  \n",
+      "9950         136           7.7  \n",
+      "9956         193           8.0  \n",
+      "9986         120           8.0  \n",
+      "\n",
+      "[974 rows x 5 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "print ('Group Excellent', Excellent)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 209,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "title                Ad AstraBloodshotBad Boys for LifeAnt-ManPercy...\n",
+       "original_language    enenenenenenenfrenesenenenenenenenenenenenenen...\n",
+       "vote_count                                                     7125390\n",
+       "vote_average                                                   43182.5\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 209,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Excellent.sum()\n",
+    "Bad.sum()\n",
+    "Good.sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 231,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "movies_bins = [0, 2.5, 5, 7.5, 10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 232,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0       (5.0, 7.5]\n",
+       "1       (5.0, 7.5]\n",
+       "2       (5.0, 7.5]\n",
+       "3       (5.0, 7.5]\n",
+       "4       (5.0, 7.5]\n",
+       "           ...    \n",
+       "9992    (5.0, 7.5]\n",
+       "9993    (5.0, 7.5]\n",
+       "9995    (5.0, 7.5]\n",
+       "9997    (5.0, 7.5]\n",
+       "9998    (5.0, 7.5]\n",
+       "Name: vote_average, Length: 8405, dtype: category\n",
+       "Categories (4, interval[float64]): [(0.0, 2.5] < (2.5, 5.0] < (5.0, 7.5] < (7.5, 10.0]]"
+      ]
+     },
+     "execution_count": 232,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# In our movies data, for example we could make the vote_average column categorical using the folowing bin limits\n",
+    "\n",
+    "\n",
+    "movies_bins = [0, 2.5, 5, 7.5, 10]\n",
+    "\n",
+    "movies_cat = pd.cut(active_user.vote_average, movies_bins)\n",
+    "\n",
+    "movies_cat"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 233,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(5.0, 7.5]     7008\n",
+       "(7.5, 10.0]     974\n",
+       "(2.5, 5.0]      421\n",
+       "(0.0, 2.5]        2\n",
+       "Name: vote_average, dtype: int64"
+      ]
+     },
+     "execution_count": 233,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# We can check the frequency of categories with value_counts\n",
+    "movies_cat.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Result: From the output, we can see that Group Good (5-7.5) having highest number of movies which are 7008 movies"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
