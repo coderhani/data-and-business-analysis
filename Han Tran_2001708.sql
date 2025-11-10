@@ -1,9 +1,6 @@
 
 ######## MySQL Assignment (50 points) ########
 
-## Please write down your name here: Han Tran
-## and your matriculation number here: 2001708
-
 #### Question 1 (5 points) ####
 ## Please fetch these columns from the "products" table:
 ##
